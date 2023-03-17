@@ -1,7 +1,6 @@
 
-Cell test = new Cell(400,400,"1");
-String sequence1 = "GATT";
-String sequence2 = "GTCGA";
+String sequence1 = "GATTCTTTTT";
+String sequence2 = "GTCGAFTJTT";
 
 Matrix m;
 void setup(){

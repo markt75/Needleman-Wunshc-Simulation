@@ -14,6 +14,7 @@ public class Matrix{
   int scoring;
   
   ArrayList<Cell> cells;
+  ArrayList<Character> redCells;
   
   Matrix(String sequence1, String sequence2, int gap, int mismatch, int match){
     this.sequence1 = sequence1;
@@ -85,6 +86,24 @@ public class Matrix{
     int firstZeroIndex = 3 + this.sequence1.length() + this.sequence2.length();
     this.cells.get(firstZeroIndex).cellColor(color(103, 255, 172, 200));
     
+    this.redCells.remove(this.redCells.size()-1);
+    int index = this.cells.size()-1;
+    color red = color(255, 64, 64, 200);
+    this.cells.get(index).cellColor(red);
+    for (Character chr : this.redCells){
+      if (chr == 'l'){
+        index = index - 1;
+        this.cells.get(index).cellColor(red);
+      }
+      if (chr == 'u'){
+        index = index - (this.sequence2.length() + 1);
+        this.cells.get(index).cellColor(red);
+      }
+      if (chr == 'd'){
+        index = index - (this.sequence2.length() + 2);
+        this.cells.get(index).cellColor(red);
+      }
+    }
   }
   
   public void displayMatrix(){
@@ -138,7 +157,7 @@ public class Matrix{
   private String[] backTracking(){
     int n = this.matrix.length - 1;
     int m = this.matrix[n-1].length - 1;
-    //String res1 = "", res2 = "";
+    this.redCells = new ArrayList<Character>();
     
     return backTrackingHelper("", "", n, m);
   }
@@ -158,29 +177,34 @@ public class Matrix{
     if ((maxNum == diagonal && diagonal == left && left == up) || (maxNum == diagonal && diagonal == left)){
       res2 = res2 + this.sequence2.charAt(j-1);
       res1 = res1 + "-";
+      this.redCells.add('l');
       return backTrackingHelper(res1, res2, i, j-1);
     }
     
     if (maxNum == diagonal && diagonal == up){
       res2 = res2 + "-";
       res1 = res1 + this.sequence1.charAt(i-1);
+      this.redCells.add('u');
       return backTrackingHelper(res1, res2, i-1, j);
     }
     
     if (maxNum == diagonal){
       res2 = res2 + this.sequence2.charAt(j-1);
       res1 = res1 + this.sequence1.charAt(i-1);
+      this.redCells.add('d');
       return backTrackingHelper(res1, res2, i-1, j-1);
     }
     
     else if (maxNum == left){
       res2 = res2 + this.sequence2.charAt(j-1);
       res1 = res1 + "-";
+      this.redCells.add('l');
       return backTrackingHelper(res1, res2, i, j-1);
     }
     
     res2 = res2 + "-";
     res1 = res1 + this.sequence1.charAt(i-1);
+    this.redCells.add('u');
     return backTrackingHelper(res1, res2, i-1, j);
   }
   
@@ -208,5 +232,9 @@ public class Matrix{
     System.out.println("Scoring" + this.scoring);
     System.out.println("Result sequence 1 " + this.alignmentResult[0]);
     System.out.println("Result sequence 2 " + this.alignmentResult[1]);
+    
+    for (int i = 0; i < this.redCells.size(); i++){
+      System.out.println(this.redCells.get(i));
+    }
   }
 }
